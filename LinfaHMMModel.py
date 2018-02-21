@@ -3,11 +3,22 @@
 
 import numpy as np
 import sys
+import time
 
 from hmmlearn import hmm
 np.random.seed(42)
 
 ELEMENT_SEPARETOR = ','
+
+#Decorator for timing
+def timing(f):
+    def wrap(*args):
+        time1 = time.time()
+        ret = f(*args)
+        time2 = time.time()
+        print '%s function took %0.3f s' % (f.func_name, (time2-time1))
+        return ret
+    return wrap
 
 #Function that allows to save the model to a file with our custom format
 def saveModel(output_filename, model):
@@ -30,6 +41,12 @@ def saveModel(output_filename, model):
                 f.write(str(j) + ', ')
             f.write('\n')
 
+@timing
+def train_HMM(n_states, n_iterations, train_seq, train_lengths):
+    model = hmm.MultinomialHMM(n_components=n_states, n_iter=n_iterations)
+    model.fit(train_seq, train_lengths)
+    return model
+
 #Main routine
 def main():
     #1- Read arguments(n_iterations, n_states, input_filename, output_filename)
@@ -39,6 +56,7 @@ def main():
     output_filename = sys.argv[4]
 
     #2- Prepare training data
+    print "preprocessing training dataset"
     with open(input_filename) as f:
         input_content = f.readlines()
     input_content = [x.strip() for x in input_content] #remove new lines
@@ -48,12 +66,16 @@ def main():
     train_seq = [j for i in input_content for j in i] # train concatenated sequences
     train_seq = [int(x) for x in train_seq] #convert to number
     train_seq = np.array(train_seq).reshape(len(train_seq), 1)
+    print "training dataset processed"
 
     #3- Train HMM
-    model = hmm.MultinomialHMM(n_components=n_states,  n_iter=n_iterations)
-    model.fit(train_seq, train_lengths)
+    print "starting HMM training"
+    model = train_HMM(n_states, n_iterations, train_seq, train_lengths)
+    print "HMM trained"
 
     #4- Save HMM to file
+    print "saving HMM on file"
     saveModel(output_filename, model)
+    print "HMM saved"
 
 main()
