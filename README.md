@@ -2,6 +2,7 @@
 
 - Use python 2
 - Need python packages *scipy*, *numpy*, *sklearn* and *hmmlearn*
+- Also a requirements.txt file is present
 
 ## Usage
 
