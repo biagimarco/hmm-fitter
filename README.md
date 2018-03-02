@@ -13,6 +13,7 @@ Where
 - <n_states>: number of hidden states
 - <input_file>: input file name
 - <output_file>: output file name
+- <n_multi_start>: number of runs from distinct initial condition. The HMM with best score is selected
 
 Note that the input file need to contains a line for each sequence. Elements of the same sequence are comma separated.
 
