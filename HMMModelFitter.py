@@ -48,6 +48,7 @@ def train_HMM(n_states, n_iterations, train_seq, train_lengths):
     return model
 
 #Main routine
+@timing
 def main():
     #1- Read arguments(n_iterations, n_states, input_filename, output_filename, n_multi_start)
     n_iterations = int(sys.argv[1])
