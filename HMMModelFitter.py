@@ -49,11 +49,12 @@ def train_HMM(n_states, n_iterations, train_seq, train_lengths):
 
 #Main routine
 def main():
-    #1- Read arguments(n_iterations, n_states, input_filename, output_filename)
+    #1- Read arguments(n_iterations, n_states, input_filename, output_filename, n_multi_start)
     n_iterations = int(sys.argv[1])
     n_states = int(sys.argv[2])
     input_filename = sys.argv[3]
     output_filename = sys.argv[4]
+    n_multi_start = int(sys.argv[5])
 
     #2- Prepare training data
     print "preprocessing training dataset"
@@ -68,14 +69,26 @@ def main():
     train_seq = np.array(train_seq).reshape(len(train_seq), 1)
     print "training dataset processed"
 
-    #3- Train HMM
-    print "starting HMM training"
-    model = train_HMM(n_states, n_iterations, train_seq, train_lengths)
-    print "HMM trained"
+    #3- Train HMMs
+    models = []
+    for j in range(0, n_multi_start):
+        np.random.seed(42+j)
+        print "starting HMM training #" + str(1+j)
+        model = train_HMM(n_states, n_iterations, train_seq, train_lengths)
+        score = model.score(train_seq, train_lengths)
+        print "HMM trained #" + str(1+j)
+        print "Convergence informations: " + str(model.monitor_)
+        models.append({"model": model, "score": score})
+
+    #4- find best HMM
+    best_model = min(models, key=lambda x: x['score'])
+    print "Best score is: " + str(best_model["score"])
 
     #4- Save HMM to file
     print "saving HMM on file"
-    saveModel(output_filename, model)
+    saveModel(output_filename, best_model["model"])
     print "HMM saved"
+
+
 
 main()

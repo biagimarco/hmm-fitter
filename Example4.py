@@ -5,7 +5,7 @@
 
 import numpy as np
 from hmmlearn import hmm
-np.random.seed(42)
+np.random.seed(43)
 
 states = ["Rainy", "Sunny"]
 n_states = len(states)
