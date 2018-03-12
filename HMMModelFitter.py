@@ -35,7 +35,7 @@ def saveModel(output_filename, model):
                 f.write(str(j) + ', ')
             f.write('\n')
 
-        f.write("emission probs [0,1]:\n")
+        f.write("emission probs:\n")
         for i in model.emissionprob_:
             for j in i:
                 f.write(str(j) + ', ')
